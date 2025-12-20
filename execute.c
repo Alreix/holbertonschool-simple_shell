@@ -8,21 +8,17 @@
 
 /**
  * fork_and_execute_command - forks a child process and executes a command
- * @cmd: full path of the command to execute (no arguments)
+ * @argv: argument vector (argv[0]is the command path)
  * @env: environment variables
  * @progname: name of the shell program for error messages
  *
  * Return: 0 on success, -1 on failure
  */
 
-int fork_and_execute_command(char *cmd, char **env, char *progname)
+int fork_and_execute_command(char **argv, char **env, char *progname)
 {
 	pid_t child;
 	int status;
-	char *argv[2];
-
-	argv[0] = cmd;
-	argv[1] = NULL;
 
 	child = fork();
 	if (child == -1)
@@ -33,7 +29,7 @@ int fork_and_execute_command(char *cmd, char **env, char *progname)
 
 	if (child == 0)
 	{
-		execve(cmd, argv, env);
+		execve(argv[0], argv, env);
 		perror(progname);
 		exit(127);
 	}
