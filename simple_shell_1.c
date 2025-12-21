@@ -22,7 +22,9 @@ int main(int ac, char **av, char **env)
 	char *line = NULL;
 	ssize_t read_line;
 	size_t buffer_size = 0;
+	unsigned long line_number = 0;
 	int interactive = isatty(STDIN_FILENO);
+	int status = 0;
 
 	(void)ac;
 
@@ -38,16 +40,16 @@ int main(int ac, char **av, char **env)
 				printf("\n");
 			break;
 		}
+		line_number++;
+		clean_line(line);
 
-		if (read_line > 0 && line[read_line - 1] == '\n')
-			line[read_line - 1] = '\0';
-
-		if (line[0] == '\0')
+		if (is_blank_line(line))
 			continue;
 
-		fork_and_execute_command(line, env, av[0]);
-
+		status = fork_and_execute_cmd(line, env, av[0], line_number, interactive);
+		if (status == -1)
+			status = 1;
 	}
 	free(line);
-	return (0);
+	return (status);
 }
