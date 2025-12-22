@@ -1,6 +1,22 @@
 #include "shell.h"
 
 /**
+ * exit_cmd - Checks if argv is exactly "exit" with no arguments
+ * @argv: tokenized command line
+ *
+ * Return: 1 if exit, 0 otherwise
+ */
+int exit_cmd(char **argv)
+{
+	if (argv == NULL || argv[0] == NULL)
+		return (0);
+	if (strcmp(argv[0], "exit") == 0 && argv[1] == NULL)
+		return (1);
+
+	return (0);
+}
+
+/**
  * read_command - reads one command line from stdin
  * @line: address of the buffer used by getline
  * @buf_size: address of the buffer size for getline
@@ -43,7 +59,6 @@ int handle_line(char *line, char **env, char *progname,
 {
 	char **argv;
 	int status;
-	char *path;
 
 	if (is_blank_line(line))
 		return (0);
@@ -58,19 +73,14 @@ int handle_line(char *line, char **env, char *progname,
 		return (0);
 	}
 
-	path = resolve_command(argv[0], env);
-	if (path == NULL)
+	if (exit_cmd(argv))
 	{
-		print_not_found(progname, line_number, argv[0], interactive);
 		free_tokens(argv);
-		return (127);
+		return (-2);
 	}
-	status = fork_and_execute_cmd(path, argv, env);
 
+	status = exec_with_path(argv, env, progname, line_number, interactive);
 	free_tokens(argv);
-
-	if (status == -1)
-		return (1);
 
 	return (status);
 }
