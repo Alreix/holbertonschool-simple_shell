@@ -1,6 +1,28 @@
 #include "shell.h"
 #include <string.h>
 
+int exec_with_path(char **argv, char **env, char *progname,
+		unsigned long line_number, int interactive)
+{
+	char *path;
+	int status;
+
+	path = resolve_command(argv[0], env);
+	if (path == NULL)
+	{
+		print_not_found(progname, line_number, argv[0], interactive);
+		return (127);
+	}
+
+	status = fork_and_execute_cmd(path, argv, env);
+	free(path);
+
+	if (status == -1)
+		return (1);
+
+	return (status);
+}
+
 /**
  * file_exists - checks if a file path exists on the filesystem
  * @path: path to the file
