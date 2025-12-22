@@ -7,15 +7,15 @@
 #include <errno.h>
 
 /**
- * fork_and_execute_command - forks a child process and executes a command
+ * fork_and_execute_cmd - forks a child process and executes a command
+ * @path: resolved executable path
  * @argv: argument vector (argv[0]is the command path)
  * @env: environment variables
- * @progname: name of the shell program for error messages
  *
- * Return: 0 on success, -1 on failure
+ * Return: exit status, or -1 on fork/wait error
  */
 
-int fork_and_execute_command(char **argv, char **env, char *progname)
+int fork_and_execute_cmd(char *path, char **argv, char **env)
 {
 	pid_t child;
 	int status;
@@ -29,8 +29,9 @@ int fork_and_execute_command(char **argv, char **env, char *progname)
 
 	if (child == 0)
 	{
-		execve(argv[0], argv, env);
-		perror(progname);
+		execve(path, argv, env);
+		if (errno == EACCES)
+			exit(126);
 		exit(127);
 	}
 	if (waitpid(child, &status, 0) == -1)
@@ -38,6 +39,9 @@ int fork_and_execute_command(char **argv, char **env, char *progname)
 		perror("waitpid");
 		return (-1);
 	}
+
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
 
 	return (0);
 }
