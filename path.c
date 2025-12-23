@@ -1,15 +1,33 @@
 #include "shell.h"
 #include <string.h>
 
+/**
+ * exec_with_path - resolves command with PATH and executes it
+ * @argv: command tokens
+ * @env: environment
+ * @progname: shell name
+ * @line_number: current input line number
+ * @interactive: interactive mode flag
+ *
+ * Return: command exit status, 126 on permission denied, 127 on not found,
+ *         1 on internal error
+ */
 int exec_with_path(char **argv, char **env, char *progname,
-		unsigned long line_number, int interactive)
+		   unsigned long line_number, int interactive)
 {
 	char *path;
 	int status;
 
+	errno = 0;
 	path = resolve_command(argv[0], env);
 	if (path == NULL)
 	{
+		if (errno == EACCES)
+		{
+			print_permission_denied(progname, line_number,
+						argv[0], interactive);
+			return (126);
+		}
 		print_not_found(progname, line_number, argv[0], interactive);
 		return (127);
 	}
@@ -99,44 +117,18 @@ char *build_full_path(char *dir, char *cmd)
  */
 char *resolve_command(char *cmd, char **env)
 {
-	char *path, *path_copy, *dir, *full_path;
+	char *path_value;
 
 	if (cmd == NULL || cmd[0] == '\0')
 		return (NULL);
 
 	if (strchr(cmd, '/') != NULL)
-	{
-		if (file_exists(cmd))
-			return (strdup(cmd));
-		return (NULL);
-	}
+		return (resolve_slash_cmd(cmd));
 
-	path = get_env_value("PATH", env);
-	if (path == NULL)
+	path_value = get_env_value("PATH", env);
+	if (path_value == NULL)
 		return (NULL);
 
-	path_copy = strdup(path);
-	if (path_copy == NULL)
-		return (NULL);
-
-	dir = strtok(path_copy, ":");
-	while (dir != NULL)
-	{
-		full_path = build_full_path(dir, cmd);
-		if (full_path == NULL)
-		{
-			free(path_copy);
-			return (NULL);
-		}
-		if (access(full_path, X_OK) == 0)
-		{
-			free(path_copy);
-			return (full_path);
-		}
-		free(full_path);
-		dir = strtok(NULL, ":");
-	}
-	free(path_copy);
-	return (NULL);
+	return (search_in_path(cmd, path_value));
 }
 
