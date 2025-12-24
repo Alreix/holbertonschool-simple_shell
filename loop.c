@@ -1,5 +1,7 @@
 #include "shell.h"
 
+#include "shell.h"
+
 /**
  * read_command - reads one command line from stdin
  * @line: address of the buffer used by getline
@@ -43,7 +45,6 @@ int handle_line(char *line, char **env, char *progname,
 {
 	char **argv;
 	int status;
-	char *path;
 
 	if (is_blank_line(line))
 		return (0);
@@ -58,19 +59,8 @@ int handle_line(char *line, char **env, char *progname,
 		return (0);
 	}
 
-	path = resolve_command(argv[0], env);
-	if (path == NULL)
-	{
-		print_not_found(progname, line_number, argv[0], interactive);
-		free_tokens(argv);
-		return (127);
-	}
-	status = fork_and_execute_cmd(path, argv, env);
-
+	status = exec_with_path(argv, env, progname, line_number, interactive);
 	free_tokens(argv);
-
-	if (status == -1)
-		return (1);
 
 	return (status);
 }
