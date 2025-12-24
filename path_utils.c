@@ -9,6 +9,8 @@
  */
 char *resolve_slash_cmd(char *cmd)
 {
+	struct stat st;
+
 	if (cmd == NULL || cmd[0] == '\0')
 	{
 		errno = ENOENT;
