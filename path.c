@@ -42,25 +42,6 @@ int exec_with_path(char **argv, char **env, char *progname,
 }
 
 /**
- * file_exists - checks if a file path exists on the filesystem
- * @path: path to the file
- *
- * Return: 1 if the file exists, 0 otherwise
- */
-int file_exists(char *path)
-{
-	struct stat file_info;
-
-	if (path == NULL)
-		return (0);
-
-	if (stat(path, &file_info) == 0)
-		return (1);
-
-	return (0);
-}
-
-/**
  * get_env_value - get environment value for a given name
  * @name: variable name (example: "PATH")
  * @env: environment array
@@ -82,30 +63,6 @@ char *get_env_value(const char *name, char **env)
 			return (env[i] + len + 1);
 	}
 	return (NULL);
-}
-
-/**
- * build_full_path - build "dir/cmd"
- * @dir: directory
- * @cmd: command
- *
- * Return: malloc'd full path, or NULL
- */
-char *build_full_path(char *dir, char *cmd)
-{
-	size_t len;
-	char *full_path;
-
-	if (dir == NULL || cmd == NULL)
-		return (NULL);
-
-	len = strlen(dir) + 1 + strlen(cmd) + 1;
-	full_path = malloc(len);
-	if (full_path == NULL)
-		return (NULL);
-
-	sprintf(full_path, "%s/%s", dir, cmd);
-	return (full_path);
 }
 
 /**
