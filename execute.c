@@ -30,9 +30,14 @@ int fork_and_execute_cmd(char *path, char **argv, char **env)
 	if (child == 0)
 	{
 		execve(path, argv, env);
-		if (errno == EACCES)
+		if (errno == EACCES || errno == EISDIR || errno == ENOEXEC
+				|| errno == ENOTDIR)
 			exit(126);
-		exit(127);
+
+		if (errno == ENOENT)
+			exit(127);
+
+		exit(1);
 	}
 	if (waitpid(child, &status, 0) == -1)
 	{
@@ -42,6 +47,8 @@ int fork_and_execute_cmd(char *path, char **argv, char **env)
 
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
 
 	return (0);
 }
