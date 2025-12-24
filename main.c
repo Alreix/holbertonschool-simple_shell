@@ -10,7 +10,7 @@
  * @av: argument vector (used for program name)
  * @env: environment variables
  *
- * Return: last command exit status
+ * Return: last command exit status, or 0 on clean EOF
  */
 int main(int ac, char **av, char **env)
 {
@@ -18,7 +18,7 @@ int main(int ac, char **av, char **env)
 	size_t buffer_size = 0;
 	int interactive = isatty(STDIN_FILENO);
 	unsigned long line_number = 0;
-	int status = 0;
+	int status = 0, tmp = 0;
 
 	(void)ac;
 
@@ -30,7 +30,14 @@ int main(int ac, char **av, char **env)
 		if (read_command(&line, &buffer_size, interactive, &line_number) == -1)
 			break;
 
-		status = handle_line(line, env, av[0], line_number, interactive);
+		tmp = handle_line(line, env, av[0], line_number, interactive);
+		if (tmp == -2)
+			break;
+
+		if (tmp == -1)
+			tmp = 1;
+
+		status = tmp;
 	}
 
 	free(line);
