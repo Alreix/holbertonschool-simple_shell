@@ -84,8 +84,10 @@ char *resolve_command(char *cmd, char **env)
 
 	path_value = get_env_value("PATH", env);
 	if (path_value == NULL)
+	{
+		errno = ENOENT;
 		return (NULL);
+	}
 
 	return (search_in_path(cmd, path_value));
 }
-
