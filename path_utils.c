@@ -9,6 +9,21 @@
  */
 char *resolve_slash_cmd(char *cmd)
 {
+	if (cmd == NULL || cmd[0] == '\0')
+	{
+		errno = ENOENT;
+		return (NULL);
+	}
+
+	if (stat(cmd, &st) == -1)
+		return (NULL);
+
+	if (S_ISDIR(st.st_mode))
+	{
+		errno = EACCES;
+		return (NULL);
+	}
+
 	if (access(cmd, X_OK) == 0)
 		return (strdup(cmd));
 
