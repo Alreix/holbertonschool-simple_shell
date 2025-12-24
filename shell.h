@@ -38,13 +38,12 @@ void print_permission_denied(char *progname, unsigned long line_number,
 /* path.c*/
 int exec_with_path(char **argv, char **env, char *progname,
 		unsigned long line_number, int interactive);
-int file_exists(char *path);
 char *get_env_value(const char *name, char **env);
-char *build_full_path(char *dir, char *cmd);
 char *resolve_command(char *cmd, char **env);
 
 /* path_util.c*/
 char *resolve_slash_cmd(char *cmd);
+char *build_full_path(char *dir, char *cmd);
 char *search_in_path(char *cmd, char *path_value);
 
 /* builtin.c*/
