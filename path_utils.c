@@ -1,5 +1,12 @@
 #include "shell.h"
 
+/**
+ * resolve_slash_cmd - resolves a command containing '/'.
+ * @cmd: command path to check
+ *
+ * Return: malloc'd copy of cmd if executable, or NULL on failure.
+ * If cmd exists but is not executable, sets errno to EACCES.
+ */
 char *resolve_slash_cmd(char *cmd)
 {
 	if (access(cmd, X_OK) == 0)
@@ -35,9 +42,18 @@ char *build_full_path(char *dir, char *cmd)
 	return (full_path);
 }
 
+/**
+ * search_in_path - searches PATH directories for an executable command.
+ * @cmd: command name to find
+ * @path_value: PATH value (colon-separated directories)
+ *
+ * Return: malloc'd full path if found and executable, or NULL.
+ * If at least one match exists but is not executable, sets errno to EACCES.
+ */
 char *search_in_path(char *cmd, char *path_value)
 {
 	char *path_copy, *dir, *full_path;
+	int perm_denied = 0;
 
 	path_copy = strdup(path_value);
 	if (path_copy == NULL)
@@ -57,15 +73,15 @@ char *search_in_path(char *cmd, char *path_value)
 		}
 
 		if (access(full_path, F_OK) == 0)
-		{
-			free(full_path);
-			free(path_copy);
-			errno = EACCES;
-			return (NULL);
-		}
+			perm_denied = 1;
+
 		free(full_path);
 		dir = strtok(NULL, ":");
 	}
 	free(path_copy);
+
+	if (perm_denied)
+		errno = EACCES;
+
 	return (NULL);
 }
