@@ -2,22 +2,43 @@
 #include <string.h>
 
 /**
- * file_exists - checks if a file path exists on the filesystem
- * @path: path to the file
+ * exec_with_path - resolves command with PATH and executes it
+ * @argv: command tokens
+ * @env: environment
+ * @progname: shell name
+ * @line_number: current input line number
+ * @interactive: interactive mode flag
  *
- * Return: 1 if the file exists, 0 otherwise
+ * Return: command exit status, 126 on permission denied, 127 on not found,
+ *         1 on internal error
  */
-int file_exists(char *path)
+int exec_with_path(char **argv, char **env, char *progname,
+		   unsigned long line_number, int interactive)
 {
-	struct stat file_info;
+	char *path;
+	int status;
 
+	errno = 0;
+	path = resolve_command(argv[0], env);
 	if (path == NULL)
-		return (0);
+	{
+		if (errno == EACCES)
+		{
+			print_permission_denied(progname, line_number,
+						argv[0], interactive);
+			return (126);
+		}
+		print_not_found(progname, line_number, argv[0], interactive);
+		return (127);
+	}
 
-	if (stat(path, &file_info) == 0)
+	status = fork_and_execute_cmd(path, argv, env);
+	free(path);
+
+	if (status == -1)
 		return (1);
 
-	return (0);
+	return (status);
 }
 
 /**
@@ -45,30 +66,6 @@ char *get_env_value(const char *name, char **env)
 }
 
 /**
- * build_full_path - build "dir/cmd"
- * @dir: directory
- * @cmd: command
- *
- * Return: malloc'd full path, or NULL
- */
-char *build_full_path(char *dir, char *cmd)
-{
-	size_t len;
-	char *full_path;
-
-	if (dir == NULL || cmd == NULL)
-		return (NULL);
-
-	len = strlen(dir) + 1 + strlen(cmd) + 1;
-	full_path = malloc(len);
-	if (full_path == NULL)
-		return (NULL);
-
-	sprintf(full_path, "%s/%s", dir, cmd);
-	return (full_path);
-}
-
-/**
  * resolve_command - find executable path for a command using PATH
  * @cmd: command name (argv[0])
  * @env: environment
@@ -77,44 +74,20 @@ char *build_full_path(char *dir, char *cmd)
  */
 char *resolve_command(char *cmd, char **env)
 {
-	char *path, *path_copy, *dir, *full_path;
+	char *path_value;
 
 	if (cmd == NULL || cmd[0] == '\0')
 		return (NULL);
 
 	if (strchr(cmd, '/') != NULL)
+		return (resolve_slash_cmd(cmd));
+
+	path_value = get_env_value("PATH", env);
+	if (path_value == NULL)
 	{
-		if (file_exists(cmd))
-			return (strdup(cmd));
+		errno = ENOENT;
 		return (NULL);
 	}
 
-	path = get_env_value("PATH", env);
-	if (path == NULL)
-		return (NULL);
-
-	path_copy = strdup(path);
-	if (path_copy == NULL)
-		return (NULL);
-
-	dir = strtok(path_copy, ":");
-	while (dir != NULL)
-	{
-		full_path = build_full_path(dir, cmd);
-		if (full_path == NULL)
-		{
-			free(path_copy);
-			return (NULL);
-		}
-		if (access(full_path, X_OK) == 0)
-		{
-			free(path_copy);
-			return (full_path);
-		}
-		free(full_path);
-		dir = strtok(NULL, ":");
-	}
-	free(path_copy);
-	return (NULL);
+	return (search_in_path(cmd, path_value));
 }
-
