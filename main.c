@@ -51,6 +51,10 @@ int main(int ac, char **av, char **env)
 			status = 1;
 
 		free(line);
+		line = NULL;
+		buffer_size = 0;
 	}
+
+	free(line);
 	return (status);
 }
