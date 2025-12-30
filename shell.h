@@ -19,5 +19,6 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname,
 		unsigned long line_number);
 
 void print_not_found(char *progname, unsigned long line_number, char *cmd);
-
+void print_permission_denied(char *progname, unsigned long line_number,
+		char *cmd)
 #endif
