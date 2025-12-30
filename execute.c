@@ -31,20 +31,19 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname,
 		perror("fork");
 		return (-1);
 	}
-
 	if (child == 0)
 	{
 		execve(cmd, argv, env);
 		if (errno == EACCES || errno == EISDIR || errno == ENOEXEC
 				|| errno == ENOTDIR)
+		{
+			print_permission_denied(progname, line_number, cmd);
 			exit(126);
+		}
 
-		if (errno == ENOENT)
-			exit(127);
-
-		exit(1);
+		print_not_found(progname, line_number, cmd);
+		exit(127);
 	}
-
 	if (waitpid(child, &status, 0) == -1)
 	{
 		perror("waitpid");
