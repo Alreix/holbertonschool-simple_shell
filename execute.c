@@ -12,12 +12,11 @@
  * @env: environment variables
  * @progname: argv[0] used for error messages
  * @line_number: input line number (non-interactive)
- * @interactive: 1 if interactive mode, 0 otherwise
  *
  * Return: 0 on success, -1 on fork/wait failure
  */
 int fork_and_execute_cmd(char *cmd, char **env, char *progname,
-		unsigned long line_number, int interactive)
+		unsigned long line_number)
 {
 	pid_t child;
 	int status;
@@ -40,7 +39,7 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname,
 		if (errno == EACCES)
 			exit(126);
 
-		print_not_found(progname, line_number, cmd, interactive);
+		print_not_found(progname, line_number, cmd);
 		exit(127);
 	}
 	if (waitpid(child, &status, 0) == -1)
