@@ -36,10 +36,7 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname,
 	{
 		execve(cmd, argv, env);
 
-		if (errno == EACCES)
-			exit(126);
-
-		print_not_found(progname, line_number, cmd);
+		print_not_found(progname, 0, cmd);
 		exit(127);
 	}
 	if (waitpid(child, &status, 0) == -1)
