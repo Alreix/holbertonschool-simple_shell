@@ -15,8 +15,7 @@ int print_prompt(void);
 void clean_line(char *line);
 int is_blank_line(char *line);
 
-int fork_and_execute_cmd(char *cmd, char **env, char *progname,
-		unsigned long line_number);
+int fork_and_execute_cmd(char *cmd, char **env, char *progname);
 
 void print_not_found(char *progname, unsigned long line_number, char *cmd);
 
