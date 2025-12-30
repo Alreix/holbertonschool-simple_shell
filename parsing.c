@@ -6,7 +6,7 @@
  */
 void clean_line(char *line)
 {
-	size_t i = 0;
+	size_t i = 0, start = 0, end;
 
 	if (line == NULL)
 		return;
@@ -15,7 +15,29 @@ void clean_line(char *line)
 		i++;
 
 	if (i > 0 && line[i - 1] == '\n')
+	{
 		line[i - 1] = '\0';
+		i--;
+	}
+
+	end = i;
+	while (end > 0 && (line[end - 1] == ' ' || line[end - 1] == '\t'))
+		end--;
+	line[end] = '\0';
+
+	while (line[start] == ' ' || line[start] == '\t')
+		start++;
+
+	if (start > 0)
+	{
+		i = 0;
+		while (line[start + i])
+		{
+			line[i] = line[start + i];
+			i++;
+		}
+		line[i] = '\0';
+	}
 }
 
 /**
