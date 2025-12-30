@@ -49,7 +49,8 @@ int main(int ac, char **av, char **env)
 		status = fork_and_execute_cmd(line, env, av[0], line_number);
 		if (status == -1)
 			status = 1;
+
+		free(line);
 	}
-	free(line);
 	return (status);
 }
