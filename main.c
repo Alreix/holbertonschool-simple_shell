@@ -46,7 +46,7 @@ int main(int ac, char **av, char **env)
 		if (is_blank_line(line))
 			continue;
 
-		status = fork_and_execute_cmd(line, env, av[0], line_number);
+		status = fork_and_execute_cmd(line, env, av[0]);
 		if (status == -1)
 			status = 1;
 	}
