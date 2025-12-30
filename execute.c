@@ -15,7 +15,8 @@
  *
  * Return: 0 on success, -1 on fork/wait failure
  */
-int fork_and_execute_cmd(char *cmd, char **env, char *progname)
+int fork_and_execute_cmd(char *cmd, char **env, char *progname,
+		unsigned long line_number)
 {
 	pid_t child;
 	int status;
@@ -35,7 +36,10 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname)
 	{
 		execve(cmd, argv, env);
 
-		print_not_found(progname, 0, cmd);
+		if (errno == EACCES)
+			exit(126);
+
+		print_not_found(progname, line_number, cmd);
 		exit(127);
 	}
 	if (waitpid(child, &status, 0) == -1)
