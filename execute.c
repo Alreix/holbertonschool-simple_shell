@@ -15,8 +15,7 @@
  *
  * Return: 0 on success, -1 on fork/wait failure
  */
-int fork_and_execute_cmd(char *cmd, char **env, char *progname,
-		unsigned long line_number)
+int fork_and_execute_cmd(char *cmd, char **env, char *progname)
 {
 	pid_t child;
 	int status;
