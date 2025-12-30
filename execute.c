@@ -35,25 +35,22 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname,
 	if (child == 0)
 	{
 		execve(cmd, argv, env);
-
-		if (errno == EACCES)
+		if (errno == EACCES || errno == EISDIR || errno == ENOEXEC
+				|| errno == ENOTDIR)
 			exit(126);
-		else if (errno == ENOENT)
-		{
-			print_not_found(progname, line_number, cmd);
+
+		if (errno == ENOENT)
 			exit(127);
-		}
-		else
-		{
-			perror(cmd);
-			exit(1);
-		}
+
+		exit(1);
 	}
+
 	if (waitpid(child, &status, 0) == -1)
 	{
 		perror("waitpid");
 		return (-1);
 	}
+
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 
