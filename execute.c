@@ -32,7 +32,7 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
 	}
 	if (child == 0)
 	{
-		execve(argv[0], argv, env);
+		execve(cmd, argv, env);
 		if (errno == EACCES)
 			exit(126);
 
