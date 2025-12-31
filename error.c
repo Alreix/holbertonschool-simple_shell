@@ -8,8 +8,6 @@
  */
 void print_not_found(char *progname, int line_count, char *cmd)
 {
-	(void)line_count;
-	(void)cmd;
 	if (progname == NULL || cmd == NULL)
 		return;
 
@@ -42,9 +40,11 @@ void print_permission_denied(char *progname, int line_count, char *cmd)
  */
 void no_such(char *progname, int line_count, char *cmd)
 {
+	(void)line_count;
+	(void)cmd;
+
 	if (progname == NULL || cmd == NULL || cmd[0] == '\0')
 		return;
 
-	fprintf(stderr, "%s: %d: %s: No such file or directory\n", progname,
-			line_count, cmd);
+	fprintf(stderr, "%s: No such file or directory\n", progname);
 }
