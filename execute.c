@@ -31,23 +31,24 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
 	}
 	if (child == 0)
 	{
-		execve(cmd, argv, env);
-		if (errno == EACCES)
+		if (execve(cmd, argv, env) == -1)
 		{
-			print_permission_denied(progname, line_count, cmd);
-			exit(126);
+			if (errno == EACCES)
+			{
+				print_permission_denied(progname, line_count, cmd);
+				exit(126);
+			}
+			else if (strchr(cmd, '/') != NULL)
+			{
+				no_such(progname, line_count, cmd);
+				exit(2);
+			}
+			else
+			{
+				print_not_found(progname, line_count, cmd);
+				exit(127);
+			}
 		}
-		else if (strchr(cmd, '/') != NULL)
-		{
-			no_such(progname, line_count, cmd);
-			exit(2);
-		}
-		else
-		{
-			print_not_found(progname, line_count, cmd);
-			exit(127);
-		}
-
 	}
 	if (waitpid(child, &status, 0) == -1)
 	{
