@@ -8,14 +8,15 @@
  */
 void print_not_found(char *progname, int line_count, char *cmd)
 {
+	(void)line_count;
+	(void)cmd;
 	if (progname == NULL || cmd == NULL)
 		return;
 
 	if (cmd[0] == '\0')
 		return;
 
-	fprintf(stderr, "%s: %d: %s: not found\n", progname,
-			line_count, cmd);
+	fprintf(stderr, "%s: No such file or directory\n", progname);
 }
 
 /**
