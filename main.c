@@ -22,7 +22,7 @@ int main(int ac, char **av, char **env)
 	char *line = NULL;
 	ssize_t read_line;
 	size_t buffer_size = 0;
-	unsigned long line_number = 0;
+	int line_count = 0;
 	int interactive = isatty(STDIN_FILENO);
 	int status = 0;
 
@@ -40,7 +40,7 @@ int main(int ac, char **av, char **env)
 				printf("\n");
 			break;
 		}
-		line_number++;
+		line_count++;
 		clean_line(line);
 
 		if (is_blank_line(line))
