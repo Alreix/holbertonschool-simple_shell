@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <stddef.h>
+#include <string.h>
 
 
 int print_prompt(void);
@@ -20,4 +21,6 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname,
 
 void print_not_found(char *progname, int line_count, char *cmd);
 void print_permission_denied(char *progname, int line_count, char *cmd);
+void no_such(char *progname, int line_count, char *cmd);
+
 #endif
