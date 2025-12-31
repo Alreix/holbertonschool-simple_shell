@@ -11,13 +11,11 @@
  * @cmd: command path typed by user
  * @env: environment variables
  * @progname: argv[0] used for error messages
- * @line_number: input line number (non-interactive)
- * @interactive: if the shell is in interactive mode.
+ * @line_count: input line number (non-interactive)
  *
  * Return: 0 on success, -1 on fork/wait failure
  */
-int fork_and_execute_cmd(char *cmd, char **env, char *progname,
-		unsigned long line_number, int interactive)
+int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
 {
 	pid_t child;
 	int status;
@@ -37,10 +35,10 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname,
 		execve(cmd, argv, env);
 		if (errno == EACCES || errno == EISDIR || errno == ENOEXEC)
 		{
-			print_permission_denied(progname, line_number, cmd, interactive);
+			print_permission_denied(progname, line_count, cmd);
 			exit(126);
 		}
-			print_not_found(progname, line_number, cmd, interactive);
+			print_not_found(progname, line_count, cmd);
 			exit(127);
 	}
 	if (waitpid(child, &status, 0) == -1)
