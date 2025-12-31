@@ -43,11 +43,6 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
 				print_not_found(progname, line_count, cmd);
 				exit(127);
 			}
-			else
-			{
-				perror(progname);
-				exit(1);
-			}
 		}
 	}
 	if (waitpid(child, &status, 0) == -1)
@@ -55,5 +50,7 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
 		perror("waitpid");
 		return (-1);
 	}
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
 	return (0);
 }
