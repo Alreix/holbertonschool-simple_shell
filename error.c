@@ -29,6 +29,6 @@ void print_permission_denied(char *progname, int line_count, char *cmd)
 	if (progname == NULL || cmd == NULL || cmd[0] == '\0')
 		return;
 
-	fprintf(stderr, "%s: %d: %s: permission denied\n", progname,
+	fprintf(stderr, "%s: %d: %s: Permission denied\n", progname,
 			line_count, cmd);
 }
