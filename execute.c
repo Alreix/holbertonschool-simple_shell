@@ -40,7 +40,7 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
 			}
 			else if (errno == ENOENT)
 			{
-				no_such(progname, line_count, cmd);
+				print_not_found(progname, line_count, cmd);
 				exit(127);
 			}
 			else
