@@ -41,7 +41,6 @@ void print_permission_denied(char *progname, int line_count, char *cmd)
 void no_such(char *progname, int line_count, char *cmd)
 {
 	(void)line_count;
-	(void)cmd;
 
 	if (progname == NULL || cmd == NULL || cmd[0] == '\0')
 		return;
