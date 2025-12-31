@@ -38,15 +38,15 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
 				print_permission_denied(progname, line_count, cmd);
 				exit(126);
 			}
-			else if (strchr(cmd, '/') != NULL)
+			else if (errno == ENOENT)
 			{
 				no_such(progname, line_count, cmd);
-				exit(2);
+				exit(127);
 			}
 			else
 			{
-				print_not_found(progname, line_count, cmd);
-				exit(127);
+				perror(progname);
+				exit(1);
 			}
 		}
 	}
