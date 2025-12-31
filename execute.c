@@ -27,29 +27,26 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
 	child = fork();
 	if (child == -1)
 	{
-		perror(progname);
+		perror("fork");
 		return (-1);
 	}
 	if (child == 0)
 	{
-		execve(cmd, argv, env);
-		perror(progname);
-		exit(1);
+		execve(argv[0], argv, env);
+		if (errno == EACCES)
+			exit(126);
+
+		else 
+		{
+			print_not_found(progname, line_count, argv[0]);
+			exit(127);
+		}
+
 	}
 	if (waitpid(child, &status, 0) == -1)
 	{
-		execve(cmd, argv, env);
-		if (errno == EACCES)
-		{
-			print_permission_denied(progname, line_count, cmd);
-			exit(126);
-		}
-			
-		else
-		{
-			print_not_found(progname, line_count, cmd);
-			exit(127);
-		}
+		perror("waitpid");
+		return (-1);
 	}
 
 	if (WIFEXITED(status))
