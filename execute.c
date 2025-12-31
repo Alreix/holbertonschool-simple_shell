@@ -25,7 +25,6 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname,
 
 	argv[0] = cmd;
 	argv[1] = NULL;
-
 	child = fork();
 	if (child == -1)
 	{
@@ -35,24 +34,29 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname,
 	if (child == 0)
 	{
 		execve(cmd, argv, env);
-		if (errno == EACCES || errno == EISDIR || errno == ENOEXEC
-				|| errno == ENOTDIR)
+		if (errno == EACCES || errno == EISDIR || errno == ENOEXEC)
 		{
 			print_permission_denied(progname, line_number, cmd, interactive);
 			exit(126);
 		}
-
-		print_not_found(progname, line_number, cmd, interactive);
-		exit(127);
+		else if (stchr(line, '/') != NULL)
+		{
+			fprintf(stderr, "%s: %lu: %s: No such file or directory\n",
+					progname, line_number, cmd);
+			exit(2);
+		}
+		else
+		{
+			print_not_found(progname, line_number, cmd, interactive);
+			exit(127);
+		}
 	}
 	if (waitpid(child, &status, 0) == -1)
 	{
 		perror("waitpid");
 		return (-1);
 	}
-
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
-
 	return (0);
 }
