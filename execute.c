@@ -39,7 +39,7 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
 	if (waitpid(child, &status, 0) == -1)
 	{
 		execve(cmd, argv, env);
-		if (errno == EACCES || errno == EISDIR || errno == ENOEXEC)
+		if (errno == EACCES)
 		{
 			print_permission_denied(progname, line_count, cmd);
 			exit(126);
