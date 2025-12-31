@@ -16,7 +16,7 @@ void print_not_found(char *progname, int line_count, char *cmd)
 	if (cmd[0] == '\0')
 		return;
 
-	fprintf(stderr, "%s: No such file or directory\n", progname);
+	fprintf(stderr, "%s: %d: %s: not found\n", progname, line_count, cmd);
 }
 
 /**
@@ -31,5 +31,20 @@ void print_permission_denied(char *progname, int line_count, char *cmd)
 		return;
 
 	fprintf(stderr, "%s: %d: %s: Permission denied\n", progname,
+			line_count, cmd);
+}
+
+/**
+ * no_such - prints a no such file or directory message
+ * @progname: name of the shell program
+ * @line_count: command line number (non-interactive)
+ * @cmd: command that failed
+ */
+void no_such(char *progname, int line_count, char *cmd)
+{
+	if (progname == NULL || cmd == NULL || cmd[0] == '\0')
+		return;
+
+	fprintf(stderr, "%s: %d: %s: No such file or directory\n", progname,
 			line_count, cmd);
 }
