@@ -23,7 +23,6 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
 
 	argv[0] = cmd;
 	argv[1] = NULL;
-
 	child = fork();
 	if (child == -1)
 	{
@@ -34,11 +33,18 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
 	{
 		execve(cmd, argv, env);
 		if (errno == EACCES)
-			exit(126);
-
-		else 
 		{
-			print_not_found(progname, line_count, argv[0]);
+			print_permission_denied(progname, line_count, cmd);
+			exit(126);
+		}
+		else if (strchr(cmd, '/') != NULL)
+		{
+			no_such(progname, line_count, cmd);
+			exit(2);
+		}
+		else
+		{
+			print_not_found(progname, line_count, cmd);
 			exit(127);
 		}
 
@@ -48,8 +54,5 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
 		perror("waitpid");
 		return (-1);
 	}
-
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
 	return (0);
 }
