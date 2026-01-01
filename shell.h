@@ -45,5 +45,7 @@ char *search_in_path(char *cmd, char *path_value);
 
 /* builtin.c*/
 int exit_cmd(char **argv);
+int env_cmd(char **argv);
+void print_env(char **env);
 
 #endif
