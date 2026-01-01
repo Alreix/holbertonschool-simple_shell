@@ -70,7 +70,9 @@ printf "ls\nwhoami\n" | ./hsh
 
 ---
 
-Project Structure
+##Project Structure
+
+```
 .
 ├── README.md                # Project documentation
 ├── man_1_hsh                # Manual page (man 1 hsh)
@@ -84,11 +86,15 @@ Project Structure
 ├── path.c                   # PATH lookup, env value management
 ├── path_utils.c             # Helpers for building and validating paths
 └── prompt.c                 # Prompt printing in interactive mode
+```
+
+
 ---
 
-##Supported Commands
 
-#Built-in Commands
+###Supported Commands
+
+##Built-in Commands
 
 Command	Description:
 exit	Exit the shell (no argument supported)
@@ -136,20 +142,22 @@ Examples:
 ./hsh: 7: /bin/shh: No such file or directory
 ```
 
-Error cases handled include:
+###Error cases handled include:
 
-Command not found
-Permission denied / not executable
-No such file or directory
-Child process terminated by a signal
-Internal errors (e.g. fork/waitpid failure)
+* Command not found
+* Permission denied / not executable
+* No such file or directory
+* Child process terminated by a signal
+* Internal errors (e.g. fork/waitpid failure)
 
 ---	
 ##Manual Page
 
 A manual page is provided for this shell.
+
 File: hsh.1
 Section: 1 (User Commands)
+
 You can view it with:
 man ./hsh.1
 
@@ -157,22 +165,22 @@ man ./hsh.1
 
 Process Flow (Overview)
 
-Main logic of the shell:
-Initialize variables and determine if the shell is running in interactive mode (isatty).
-In interactive mode, display the prompt ($) .
-Read a line from standard input using getline.
-Clean and normalize the line (remove newline, trim spaces and tabs).
-If the line is empty or only whitespace, restart the loop.
-Split the line into tokens (command only, no arguments).
-Check for built-in commands (exit, env).
-If not a built-in:
-Resolve the executable path using:
-Direct path if the command contains /
-PATH lookup otherwise
-Fork a child process and execute the command with execve.
-Wait for the child process with waitpid.
-Store the exit status of the command.
-Repeat the loop until exit or EOF.
+###Main logic of the shell:
+* Initialize variables and determine if the shell is running in interactive mode (isatty).
+* In interactive mode, display the prompt ($) .
+* Read a line from standard input using getline.
+* Clean and normalize the line (remove newline, trim spaces and tabs).
+* If the line is empty or only whitespace, restart the loop.
+* Split the line into tokens (command only, no arguments).
+* Check for built-in commands (exit, env).
+* If not a built-in:
+* Resolve the executable path using:
+* Direct path if the command contains /
+* PATH lookup otherwise
+* Fork a child process and execute the command with execve.
+* Wait for the child process with waitpid.
+* Store the exit status of the command.
+* Repeat the loop until exit or EOF.
 
 A graphical flowchart can be added in a subdirectory, for example:
 
@@ -180,7 +188,9 @@ A graphical flowchart can be added in a subdirectory, for example:
 
 and referenced from this README.
 
-Testing and Debugging
+---
+
+##Testing and Debugging
 
 Compilation Check
 ```
@@ -191,5 +201,8 @@ Memory Leak Check (Valgrind)
 ```
 valgrind --leak-check=full ./hsh
 ```
-License
+
+---
+
+##License
 This project is part of the Holberton School curriculum and is provided for educational purposes.
