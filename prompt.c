@@ -9,7 +9,7 @@
 
 int print_prompt(void)
 {
-	printf("$ ");
+	printf("($) ");
 	fflush(stdout);
 	return (0);
 }

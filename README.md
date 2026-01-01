@@ -177,4 +177,3 @@ valgrind --leak-check=full ./hsh
 License
 
 This project is part of the Holberton School curriculum and is provided for educational purposes.
-

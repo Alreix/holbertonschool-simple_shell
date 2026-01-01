@@ -7,23 +7,18 @@
 #include <errno.h>
 
 /**
- * fork_and_execute_cmd - forks and executes a command
- * @cmd: command path typed by user
+ * fork_and_execute_cmd - forks a child process and executes a command
+ * @path: resolved executable path
+ * @argv: argument vector (argv[0]is the command path)
  * @env: environment variables
- * @progname: argv[0] used for error messages
- * @line_number: input line number (non-interactive)
  *
- * Return: 0 on success, -1 on fork/wait failure
+ * Return: exit status, or -1 on fork/wait error
  */
-int fork_and_execute_cmd(char *cmd, char **env, char *progname,
-		unsigned long line_number)
+
+int fork_and_execute_cmd(char *path, char **argv, char **env)
 {
 	pid_t child;
 	int status;
-	char *argv[2];
-
-	argv[0] = cmd;
-	argv[1] = NULL;
 
 	child = fork();
 	if (child == -1)
@@ -31,25 +26,27 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname,
 		perror("fork");
 		return (-1);
 	}
-
 	if (child == 0)
 	{
-		execve(cmd, argv, env);
-
-		if (errno == EACCES)
+		execve(path, argv, env);
+		if (errno == EACCES || errno == EISDIR || errno == ENOEXEC
+				|| errno == ENOTDIR)
 			exit(126);
 
-		print_not_found(progname, line_number, cmd);
-		exit(127);
+		if (errno == ENOENT)
+			exit(127);
+
+		exit(1);
 	}
 	if (waitpid(child, &status, 0) == -1)
 	{
 		perror("waitpid");
 		return (-1);
 	}
-
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
 
 	return (0);
 }
