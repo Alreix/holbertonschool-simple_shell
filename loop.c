@@ -55,6 +55,12 @@ int handle_line(char *line, char **env, char *progname,
 		free_tokens(argv);
 		return (0);
 	}
+	
+	if (exit_cmd(argv))
+	{
+		free_tokens(argv);
+		return (-2);
+	}
 
 	status = exec_with_path(argv, env, progname, line_number);
 	free_tokens(argv);
