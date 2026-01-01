@@ -6,16 +6,11 @@
 
 /**
  * main - entry point of the simple shell
- *
- * Description: This function implements a basic UNIX command line interpreter.
- * It displays a prompt in interactive mode, reads user input using getline,
- * executes commands using fork and execve, and handles end-of-file (Ctrl+D).
- *
  * @ac: argument count (unused)
- * @av: argument vector (used for program name in error messages)
+ * @av: argument vector (used for program name)
  * @env: environment variables
  *
- * Return: last command exit status
+ * Return: last command exit status, or 0 on clean EOF
  */
 int main(int ac, char **av, char **env)
 {
@@ -23,7 +18,7 @@ int main(int ac, char **av, char **env)
 	size_t buffer_size = 0;
 	int interactive = isatty(STDIN_FILENO);
 	int line_number = 0;
-	int status = 0;
+	int status = 0, tmp = 0;
 
 	(void)ac;
 
@@ -35,7 +30,14 @@ int main(int ac, char **av, char **env)
 		if (read_command(&line, &buffer_size, interactive, &line_number) == -1)
 			break;
 
-		status = handle_line(line, env, av[0], line_number);
+		tmp = handle_line(line, env, av[0], line_number);
+		if (tmp == -2)
+			break;
+
+		if (tmp == -1)
+			tmp = 1;
+
+		status = tmp;
 	}
 
 	free(line);
