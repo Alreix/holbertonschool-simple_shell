@@ -43,4 +43,7 @@ char *resolve_slash_cmd(char *cmd);
 char *build_full_path(char *dir, char *cmd);
 char *search_in_path(char *cmd, char *path_value);
 
+/* builtin.c*/
+int exit_cmd(char **argv);
+
 #endif
