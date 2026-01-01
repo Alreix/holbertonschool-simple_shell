@@ -3,7 +3,7 @@
 /**
  * print_not_found - prints a "not found" error message
  * @progname: program name (argv[0])
- * @line_count: input line number (non-interactive)
+ * @line_number: input line number (non-interactive)
  * @cmd: command name that was not found
  */
 void print_not_found(char *progname, int line_number, char *cmd)
