@@ -8,21 +8,19 @@
 
 /**
  * fork_and_execute_cmd - forks and executes a command
- * @cmd: command path typed by user
+ * @argv: command path typed by user
  * @env: environment variables
  * @progname: argv[0] used for error messages
  * @line_count: input line number (non-interactive)
  *
  * Return: 0 on success, -1 on fork/wait failure
  */
-int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
+int fork_and_execute_cmd(char **argv, char **env, char *progname,
+		int line_number)
 {
 	pid_t child;
 	int status;
-	char *argv[2];
 
-	argv[0] = cmd;
-	argv[1] = NULL;
 	child = fork();
 	if (child == -1)
 	{
@@ -31,18 +29,17 @@ int fork_and_execute_cmd(char *cmd, char **env, char *progname, int line_count)
 	}
 	if (child == 0)
 	{
-		if (execve(cmd, argv, env) == -1)
+		execve(argv[0], argv, env);
+
+		if (errno == EACCES)
 		{
-			if (errno == EACCES)
-			{
-				print_permission_denied(progname, line_count, cmd);
-				exit(126);
-			}
-			else if (errno == ENOENT)
-			{
-				print_not_found(progname, line_count, cmd);
-				exit(127);
-			}
+			print_permission_denied(progname, line_number, argv[0]);
+			exit(126);
+		}
+		else
+		{
+			print_not_found(progname, line_number, argv[0]);
+			exit(127);
 		}
 	}
 	if (waitpid(child, &status, 0) == -1)

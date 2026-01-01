@@ -15,15 +15,14 @@
  * @av: argument vector (used for program name in error messages)
  * @env: environment variables
  *
- * Return: 0 on success
+ * Return: last command exit status
  */
 int main(int ac, char **av, char **env)
 {
 	char *line = NULL;
-	ssize_t read_line;
 	size_t buffer_size = 0;
-	int line_count = 0;
 	int interactive = isatty(STDIN_FILENO);
+	int line_number = 0;
 	int status = 0;
 
 	(void)ac;
@@ -33,22 +32,10 @@ int main(int ac, char **av, char **env)
 		if (interactive)
 			print_prompt();
 
-		read_line = getline(&line, &buffer_size, stdin);
-		if (read_line == -1)
-		{
-			if (interactive)
-				printf("\n");
+		if (read_command(&line, &buffer_size, interactive, &line_number) == -1)
 			break;
-		}
-		line_count++;
-		clean_line(line);
 
-		if (is_blank_line(line))
-			continue;
-
-		status = fork_and_execute_cmd(line, env, av[0], line_count);
-		if (status == -1)
-			status = 1;
+		status = handle_line(line, env, av[0], line_number);
 	}
 
 	free(line);
