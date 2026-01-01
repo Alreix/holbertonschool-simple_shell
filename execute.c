@@ -7,16 +7,15 @@
 #include <errno.h>
 
 /**
- * fork_and_execute_cmd - forks and executes a command
- * @argv: command path typed by user
+ * fork_and_execute_cmd - forks a child process and executes a command
+ * @path: resolved executable path
+ * @argv: argument vector (argv[0]is the command path)
  * @env: environment variables
- * @progname: argv[0] used for error messages
- * @line_number: input line number (non-interactive)
  *
- * Return: 0 on success, -1 on fork/wait failure
+ * Return: exit status, or -1 on fork/wait error
  */
-int fork_and_execute_cmd(char **argv, char **env, char *progname,
-		int line_number)
+
+int fork_and_execute_cmd(char *path, char **argv, char **env)
 {
 	pid_t child;
 	int status;
@@ -30,18 +29,15 @@ int fork_and_execute_cmd(char **argv, char **env, char *progname,
 
 	if (child == 0)
 	{
-		execve(argv[0], argv, env);
-
-		if (errno == EACCES)
-		{
-			print_permission_denied(progname, line_number, argv[0]);
+		execve(path, argv, env);
+		if (errno == EACCES || errno == EISDIR || errno == ENOEXEC
+				|| errno == ENOTDIR)
 			exit(126);
-		}
-		else
-		{
-			print_not_found(progname, line_number, argv[0]);
+
+		if (errno == ENOENT)
 			exit(127);
-		}
+
+		exit(1);
 	}
 	if (waitpid(child, &status, 0) == -1)
 	{
@@ -51,6 +47,8 @@ int fork_and_execute_cmd(char **argv, char **env, char *progname,
 
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
 
 	return (0);
 }
