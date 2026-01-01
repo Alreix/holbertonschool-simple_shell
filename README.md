@@ -37,6 +37,7 @@ To compile the program, use:
 
 ```bash
 gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
+```
 
 Usage
 Interactive Mode
@@ -45,25 +46,31 @@ Run the program as follows:
 ./hsh
 
 The shell will display:
+```
 ($)
+```
 
 Then wait for commands such as:
+```
 ($) ls
 ($) /bin/pwd
 ($) env
 ($) exit
-
+```
 
 Non-interactive Mode
+
 In non-interactive mode, the shell reads commands from standard input and executes them sequentially, without displaying the prompt.
 Commands can be piped into the shell:
-
+```
 echo "ls" | ./hsh
 echo "pwd" | ./hsh
 printf "ls\nwhoami\n" | ./hsh
+```
 
+---
 
-Project Structure
+##Project Structure
 .
 ├── README.md                # Project documentation
 ├── man_1_hsh                # Manual page (man 1 hsh)
@@ -77,14 +84,17 @@ Project Structure
 ├── path.c                   # PATH lookup, env value management
 ├── path_utils.c             # Helpers for building and validating paths
 └── prompt.c                 # Prompt printing in interactive mode
+---
 
-Supported Commands
-Built-in Commands
-Command	Description
+##Supported Commands
+
+#Built-in Commands
+
+Command	Description:
 exit	Exit the shell (no argument supported)
 env	Print the current environment variables
 
-External Commands
+#External Commands
 
 The shell supports:
 
@@ -97,6 +107,7 @@ ls, pwd, echo, etc.
 Programs available in custom PATH directories
 
 Usage Examples
+```
 $ ./hsh
 ($) ls
 builtin.c  error.c  execute.c  hsh  loop.c  parsing.c  path.c  path_utils.c  prompt.c  shell.h
@@ -110,17 +121,20 @@ HOME=/home/user
 ...
 ($) exit
 $
+```
 
-Error Handling
+---
+##Error Handling
 
 This shell implements structured error messages similar to /bin/sh, using the format:
 program_name: line_number: command: error_message
 
 Examples:
-
+```
 ./hsh: 3: aaa: not found
 ./hsh: 5: ./dir: Permission denied
 ./hsh: 7: /bin/shh: No such file or directory
+```
 
 Error cases handled include:
 
@@ -130,7 +144,8 @@ No such file or directory
 Child process terminated by a signal
 Internal errors (e.g. fork/waitpid failure)
 
-Manual Page
+---	
+##Manual Page
 
 A manual page is provided for this shell.
 File: hsh.1
@@ -168,12 +183,13 @@ and referenced from this README.
 Testing and Debugging
 
 Compilation Check
+```
 gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
+```
 
 Memory Leak Check (Valgrind)
-
+```
 valgrind --leak-check=full ./hsh
-
+```
 License
-
 This project is part of the Holberton School curriculum and is provided for educational purposes.
