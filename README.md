@@ -96,9 +96,9 @@ printf "ls\nwhoami\n" | ./hsh
 
 ##Built-in Commands
 
-Command	Description:
-exit	Exit the shell (no argument supported)
-env	Print the current environment variables
+Command 	Description:
+`exit`		Exit the shell (no argument supported)
+`env`		Print the current environment variables
 
 #External Commands
 
@@ -133,7 +133,9 @@ $
 ##Error Handling
 
 This shell implements structured error messages similar to /bin/sh, using the format:
+```
 program_name: line_number: command: error_message
+```
 
 Examples:
 ```
@@ -148,14 +150,14 @@ Examples:
 * Permission denied / not executable
 * No such file or directory
 * Child process terminated by a signal
-* Internal errors (e.g. fork/waitpid failure)
+* Internal errors (e.g. `fork`/`waitpid` failure)
 
 ---	
 ##Manual Page
 
 A manual page is provided for this shell.
 
-File: hsh.1
+File: `hsh.1`
 Section: 1 (User Commands)
 
 You can view it with:
@@ -166,25 +168,25 @@ man ./hsh.1
 Process Flow (Overview)
 
 ###Main logic of the shell:
-* Initialize variables and determine if the shell is running in interactive mode (isatty).
-* In interactive mode, display the prompt ($) .
-* Read a line from standard input using getline.
+* Initialize variables and determine if the shell is running in interactive mode `(isatty)`.
+* In interactive mode, display the prompt `($)` .
+* Read a line from standard input using `getline`.
 * Clean and normalize the line (remove newline, trim spaces and tabs).
 * If the line is empty or only whitespace, restart the loop.
 * Split the line into tokens (command only, no arguments).
-* Check for built-in commands (exit, env).
+* Check for built-in commands (`exit`, `env`).
 * If not a built-in:
 * Resolve the executable path using:
-* Direct path if the command contains /
+* Direct path if the command contains `/`
 * PATH lookup otherwise
-* Fork a child process and execute the command with execve.
-* Wait for the child process with waitpid.
+* Fork a child process and execute the command with `execve`.
+* Wait for the child process with `waitpid`.
 * Store the exit status of the command.
-* Repeat the loop until exit or EOF.
+* Repeat the loop until `exit` or `EOF`.
 
 A graphical flowchart can be added in a subdirectory, for example:
 
-------------------img/simple_shell_flowchart.png
+img/simple_shell_flowchart.png
 
 and referenced from this README.
 
