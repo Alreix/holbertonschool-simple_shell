@@ -56,13 +56,8 @@ int handle_line(char *line, char **env, char *progname,
 		return (0);
 	}
 
-	status = fork_and_execute_cmd(argv, env, progname,
-			line_number);
-
+	status = exec_with_path(argv, env, progname, line_number);
 	free_tokens(argv);
-
-	if (status == -1)
-		return (1);
 
 	return (status);
 }
