@@ -23,8 +23,7 @@ int exec_with_path(char **argv, char **env, char *progname,
 	{
 		if (errno == EACCES)
 		{
-			print_permission_denied(progname, line_number,
-						argv[0]);
+			print_permission_denied(progname, line_number, argv[0]);
 			return (126);
 		}
 		print_not_found(progname, line_number, argv[0]);
