@@ -70,7 +70,7 @@ printf "ls\nwhoami\n" | ./hsh
 
 ---
 
-##Project Structure
+Project Structure
 .
 ├── README.md                # Project documentation
 ├── man_1_hsh                # Manual page (man 1 hsh)
