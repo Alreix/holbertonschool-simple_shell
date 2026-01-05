@@ -88,19 +88,20 @@ printf "ls\nwhoami\n" | ./hsh
 └── prompt.c                 # Prompt printing in interactive mode
 ```
 
-
 ---
 
+## Supported Commands
 
-### Supported Commands
+### Built-in Commands
 
-## Built-in Commands
+- exit  
+  Exit the shell (no arguments supported).
 
-Command 	Description:
-`exit`		Exit the shell (no argument supported)
-`env`		Print the current environment variables
+- env  
+  Print the current environment variables.
 
-# External Commands
+
+### External Commands
 
 The shell supports:
 
@@ -109,6 +110,18 @@ Absolute path commands:
 
 Commands located through $PATH:
 ls, pwd, echo, etc.
+
+### Limitations
+
+This shell does not support:
+- Command arguments (only the command name is handled)
+- Pipes (|)
+- Redirections (<, >, >>)
+- Command chaining (&&, ||)
+- Wildcards (*)
+- Aliases
+- Signal handling (Ctrl+C behavior is default)
+
 
 Programs available in custom PATH directories
 
@@ -128,8 +141,20 @@ HOME=/home/user
 ($) exit
 $
 ```
+---
+
+## Environment
+
+This shell uses the environment variables inherited from the parent process.
+
+The `PATH` environment variable is used to locate executable files when
+commands are not provided with an absolute or relative path.
+
+The shell does not modify the environment but passes it directly to executed
+programs using `execve`.
 
 ---
+
 ## Error Handling
 
 This shell implements structured error messages similar to /bin/sh, using the format:
@@ -152,8 +177,16 @@ Examples:
 * Child process terminated by a signal
 * Internal errors (e.g. `fork`/`waitpid` failure)
 
----	
-##M anual Page
+### Return Values
+
+- Returns 0 on successful execution
+- Returns 126 when a command is found but not executable
+- Returns 127 when a command is not found
+- Returns 128 + signal number when terminated by a signal
+
+---
+
+## Manual Page
 
 A manual page is provided for this shell.
 
@@ -165,24 +198,33 @@ man ./hsh.1
 
 (or install it in your man path and use man hsh).
 
-Process Flow (Overview)
+---
 
-###Main logic of the shell:
-* Initialize variables and determine if the shell is running in interactive mode `(isatty)`.
-* In interactive mode, display the prompt `($)` .
-* Read a line from standard input using `getline`.
-* Clean and normalize the line (remove newline, trim spaces and tabs).
-* If the line is empty or only whitespace, restart the loop.
-* Split the line into tokens (command only, no arguments).
-* Check for built-in commands (`exit`, `env`).
-* If not a built-in:
-* Resolve the executable path using:
-* Direct path if the command contains `/`
-* PATH lookup otherwise
-* Fork a child process and execute the command with `execve`.
-* Wait for the child process with `waitpid`.
-* Store the exit status of the command.
-* Repeat the loop until `exit` or `EOF`.
+## Process Flow (Overview)
+
+### Main logic of the shell
+
+1. Initialize variables and determine if the shell is running in interactive mode using `isatty`.
+2. If running in interactive mode, display the prompt (`$`).
+3. Read a line from standard input using `getline`.
+4. Clean and normalize the input line:
+   - Remove the trailing newline
+   - Trim leading and trailing whitespace
+5. If the line is empty or contains only whitespace, restart the loop.
+6. Split the input line into tokens (command only, no arguments).
+7. Check if the command is a built-in:
+   - `exit`
+   - `env`
+8. If the command is not a built-in:
+   1. Determine how to resolve the command:
+      - Use the command directly if it contains a `/`
+      - Otherwise, search for it in the `PATH`
+   2. Fork a child process.
+   3. Execute the command using `execve`.
+   4. If execution fails, print the appropriate error message.
+9. In the parent process, wait for the child process using `waitpid`.
+10. Retrieve and store the exit status of the command.
+11. Repeat the loop until `exit` is called or EOF is reached.
 
 A graphical flowchart can be added in a subdirectory, for example:
 
@@ -192,7 +234,7 @@ and referenced from this README.
 
 ---
 
-##Testing and Debugging
+## Testing and Debugging
 
 Compilation Check
 ```
@@ -206,5 +248,5 @@ valgrind --leak-check=full ./hsh
 
 ---
 
-##License
+## License
 This project is part of the Holberton School curriculum and is provided for educational purposes.
