@@ -1,0 +1,176 @@
+.\" Manpage for hsh
+.TH HSH 5 "January 2026" "Holberton School" "User Commands"
+.SH NAME
+hsh \- simple UNIX command interpreter
+
+.SH SYNOPSIS
+.B hsh
+.br
+.B hsh
+.RI [ command " " argument ... ]
+.br
+.B echo "ls" | hsh
+
+.SH DESCRIPTION
+The
+.B hsh
+program is a simple command-line interpreter written in C as part of the Holberton School curriculum.
+It provides a minimal set of features similar to the standard UNIX shell
+.BR sh (1) ,
+allowing users to execute system commands and access environment variables.
+
+The shell supports both interactive and non-interactive usage, basic PATH resolution, and a limited set of built-in commands.
+
+.SH MODES OF OPERATION
+.TP
+.B Interactive mode
+Runs when standard input is connected to a terminal. The shell displays the prompt:
+.PP
+($)
+and waits for user input.
+
+Example:
+.pp
+($) ls -l
+($) echo Hello World
+
+.TP
+.B Non-interactive mode
+Runs when input is redirected or piped into the shell. Commands are executed sequentially without printing a prompt.
+
+Example:
+.PP
+$ echo "ls" | hsh
+$ echo "ls -l" | ./hsh
+
+.SH BUILT-IN COMMANDS
+The following built-in commands are implemented:
+
+.TP
+.B exit
+Exit the shell. This command takes no arguments and returns the exit status of the last executed command.
+This command causes the shell to terminate.
+
+.TP
+.B env
+Print the current environment variables, one per line, in the format
+.I name=value .
+
+.SH COMMAND EXECUTION
+The shell executes commands according to the following logic:
+
+.PP
+1. If the command contains a slash '/', it is treated as a file path.  
+2. Otherwise, the shell searches for the executable in the directories listed in the
+.B PATH
+environment variable.  
+3. If found, the shell creates a new process using
+.B fork (2)
+and replaces the child process image using
+.B execve (2).  
+4. The parent process waits for the child to terminate using
+.B waitpid (2).  
+5. The exit status of the last command is stored and returned by the shell.
+
+.SH RETURN VALUES
+The return value of
+.B hsh
+is the exit status of the last executed command.
+
+The following exit codes may be returned:
+
+.TS
+tab(@);
+l l.
+Code@Description
+0@Successful execution or EOF (Ctrl+D)
+1@Internal error (fork or waitpid failure)
+126@Permission denied / Command not executable
+127@Command not found
+128 + n@Command terminated by signal n
+.TE
+
+.SH ERROR MESSAGES
+Error messages are printed to
+.B stderr
+following this format:
+
+.PP
+.nf
+hsh: line_number: command: error_message
+.fi
+
+Examples:
+
+.PP
+.nf
+hsh: 3: aaa: not found
+hsh: 5: ./dir: Permission denied
+hsh: 7: /bin/shh: No such file or directory
+.fi
+
+.SH ENVIRONMENT
+.TP
+.B PATH
+A colon-separated list of directories in which the shell searches for commands.
+The environment is passed unchanged to executed programs.
+
+Example:
+.PP
+PATH=/usr/local/bin:/usr/bin:/bin
+
+.SH LIMITATIONS
+This educational shell does not support:
+.PP
+\- Complex command lines  
+\- Command separators (; , &&, ||)  
+\- Pipes (|)  
+\- Redirections (<, >)  
+\- Wildcards (*) or globbing  
+\- Environment variable expansion ($VAR)  
+\- Job control (&, fg, bg)  
+\- Aliasing or command history
+
+.SH EXAMPLES
+Interactive usage:
+.PP
+.nf
+$ ./hsh
+($) ls
+file.c  hsh  shell.h
+($) /bin/pwd
+/home/user/simple_shell
+($) env
+PATH=/usr/bin:/bin
+HOME=/home/user
+($) exit
+.fi
+
+Non-interactive:
+.PP
+.nf
+$ echo "ls" | ./hsh
+file.c  hsh  shell.h
+.fi
+
+.SH AUTHOR
+Written by Morgane (Alreix) as part of the Holberton School curriculum.
+
+.SH FILES
+.TP
+.I hsh
+The shell executable.
+
+.TP
+.I hsh.1
+This manual page.
+
+.SH SEE ALSO
+sh(1), bash(1), execve(2), fork(2), waitpid(2), environ(7)
+
+.SH CREDITS
+Developed as part of the Holberton School Low-Level Programming curriculum.
+
+.SH COPYRIGHT
+This project is provided for educational purposes only.
+
