@@ -70,7 +70,7 @@ printf "ls\nwhoami\n" | ./hsh
 
 ---
 
-##Project Structure
+## Project Structure
 
 ```
 .
@@ -92,15 +92,15 @@ printf "ls\nwhoami\n" | ./hsh
 ---
 
 
-###Supported Commands
+### Supported Commands
 
-##Built-in Commands
+## Built-in Commands
 
 Command 	Description:
 `exit`		Exit the shell (no argument supported)
 `env`		Print the current environment variables
 
-#External Commands
+# External Commands
 
 The shell supports:
 
@@ -130,7 +130,7 @@ $
 ```
 
 ---
-##Error Handling
+## Error Handling
 
 This shell implements structured error messages similar to /bin/sh, using the format:
 ```
@@ -144,7 +144,7 @@ Examples:
 ./hsh: 7: /bin/shh: No such file or directory
 ```
 
-###Error cases handled include:
+### Error cases handled include:
 
 * Command not found
 * Permission denied / not executable
@@ -153,7 +153,7 @@ Examples:
 * Internal errors (e.g. `fork`/`waitpid` failure)
 
 ---	
-##Manual Page
+##M anual Page
 
 A manual page is provided for this shell.
 
