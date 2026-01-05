@@ -109,7 +109,7 @@ Absolute path commands:
 /bin/ls, /bin/pwd, /usr/bin/whoami, etc.
 
 Commands located through $PATH:
-ls, pwd, echo, etc.
+`ls`, `pwd`, `echo`, etc.
 
 ### Limitations
 
