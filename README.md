@@ -250,5 +250,12 @@ valgrind --leak-check=full ./hsh
 
 ---
 
+## Author
+
+- **Morgane abbattista** (Alreix)
+- GitHub: https://github.com/Alreix
+ 
+---
+
 ## License
 This project is part of the Holberton School curriculum and is provided for educational purposes.
