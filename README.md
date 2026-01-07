@@ -196,7 +196,9 @@ Section: 1 (User Commands)
 You can view it with:
 man ./hsh.1
 
-(or install it in your man path and use man hsh).
+You can also preview the manual page here :
+
+![View man page hsh](img/man_page_hsh.png)
 
 ---
 
