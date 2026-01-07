@@ -228,7 +228,7 @@ man ./hsh.1
 
 A graphical flowchart can be added in a subdirectory, for example:
 
-img/simple_shell_flowchart.png
+![Simple Shell – Process Flowchart](img/simple_shell_flowchart.png)
 
 and referenced from this README.
 
