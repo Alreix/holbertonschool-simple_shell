@@ -50,7 +50,7 @@ int handle_line(char *line, char **env, char *progname,
 	if (argv == NULL)
 		return (1);
 
-	if (argv[0] == NULL || argv[0][0] == '\0' || is_blank_line(argv[0]))
+	if (argv[0] == NULL || argv[0][0] == '\0')
 	{
 		free_tokens(argv);
 		return (0);
