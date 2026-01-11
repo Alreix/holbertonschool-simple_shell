@@ -114,7 +114,6 @@ Commands located through $PATH:
 ### Limitations
 
 This shell does not support:
-- Command arguments (only the command name is handled)
 - Pipes (|)
 - Redirections (<, >, >>)
 - Command chaining (&&, ||)
